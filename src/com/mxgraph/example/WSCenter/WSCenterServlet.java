@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.mongodb.util.JSON;
+import com.mxgraph.examples.db.MethodModel;
 import com.mxgraph.examples.db.MysqlUtil;
 import com.mxgraph.examples.db.WebServiceDbModel;
 import com.mxgraph.examples.web.Constants;
@@ -38,16 +39,45 @@ public class WSCenterServlet extends HttpServlet {
 			Vector<WebServiceDbModel> result =  mysql.getAllType();
 			String outputStr = "[";
 			for(WebServiceDbModel ws:result){
-				if(ws.getType() !=null ){
+				String str = "{\n"
+						+"\"id\":\""+ws.getId()+"\",\n"
+						+"\"name\":\""+ws.getName()+"\",\n"
+						+"\"type\":\""+ws.getType()+"\",\n"
+						+"\"URL\":\""+ws.getURL()+"\",\n"
+						+"\"parentid\":\""+ws.getParentid()+"\",\n"
+						+"\"state\":\"stop\"\n}";
+				outputStr += str+",";
+			}
+			if(result.size()>0){
+				outputStr = outputStr.substring(0,outputStr.length()-1);
+			}
+			outputStr += "]";
+			response.setContentType("text/JSON;charset=GB2312");
+			PrintWriter out = response.getWriter();
+			out.println(outputStr);
+			out.close();
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+			String parentId = request.getParameter("serviceId");
+			int id = Integer.parseInt(parentId);
+			MysqlUtil mysql = new MysqlUtil();
+			Vector<MethodModel> result =  mysql.getMethods(id);
+			String outputStr = "[";
+			for(MethodModel ws:result){
+				if(ws.getId() != -1 ){
 					String str = "{\n"
+							+"\"id\":\""+ws.getId()+"\",\n"
 							+"\"name\":\""+ws.getName()+"\",\n"
-							+"\"type\":\""+ws.getType()+"\",\n"
+							+"\"Method\":\""+ws.getMethod()+"\",\n"
 							+"\"URL\":\""+ws.getURL()+"\",\n"
 							+"\"state\":\"stop\"\n}";
 					outputStr += str+",";
 				}
 			}
-			outputStr = outputStr.substring(0,outputStr.length()-1);
+			if(result.size()>0){
+				outputStr = outputStr.substring(0,outputStr.length()-1);
+			}
 			outputStr += "]";
 			response.setContentType("text/JSON;charset=GB2312");
 			PrintWriter out = response.getWriter();

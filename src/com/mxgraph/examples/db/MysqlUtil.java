@@ -53,6 +53,20 @@ public class MysqlUtil {
         }
         return rs;
     }
+    
+    public boolean execute(String sql) {
+        boolean rs = false;
+        try {
+            rs = false;
+            Connection conn = this.getConn();
+            Statement stmt = conn.createStatement();
+            rs = stmt.execute(sql);
+        } catch (SQLException ex) {
+            System.out.println("ִ执行错误");
+            ex.printStackTrace();
+        }
+        return rs;
+    }
 
     public boolean executeUpdate(String strSQL) {
         try {
@@ -176,7 +190,7 @@ public class MysqlUtil {
     public static void main(String[] args){
     	MysqlUtil ct = new MysqlUtil();
     	System.out.println(ct.getModels(1));
-    	Vector<MethodModel> res = ct.getMethods(2);
+    	Vector<MethodModel> res = ct.getMethods(1);
     	for(MethodModel model:res){
     		System.out.println("id:"+model.getId()+" URL:"+model.getURL()+" name:"+model.getName()+" method:"+model.getMethod());
     	}

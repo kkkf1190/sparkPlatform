@@ -19,13 +19,11 @@ public class BlancerUtil {
     }
 	protected double range(String node){
 		MasterBean master = this.clusterInfo.get(node);
-        double ans = 0.6*master.getAppsCounter()+0.2*master.getMemRate()+0.2*master.getCpuRate();
+        double ans = 0.6*master.getAppsCounter()+0.02*master.getMemRate()+0.02*master.getCpuRate();
         return ans;
     }
 	protected void reDeploySCA(String SCANode,String targetNode){
 		if(SCANode.equals(targetNode)) return;
-		
-
     }
 	protected void deploySparkJar(String targetNode){
 		String[] cmd ={"/bin/sh", "-c", "spark-submit --jars $(echo /home/zhou/genSpark/test/lib/*.jar | tr ' ' ',')  --class \""+"filename"+"\" --master "+targetNode+" "+Constants.JAR_LOCATION};
@@ -67,10 +65,24 @@ public class BlancerUtil {
         this.clusterInfo = clusterInfo;
         return clusterInfo;
     }
+	public String caculateNode(){
+		fetch("http://localhost:8088/sparkPlatform/monitor");
+		double min = Integer.MAX_VALUE;
+		String minNode = null;
+		for(String key:this.clusterInfo.keySet()){
+			double value = range(key);
+			if(value<min){
+				min = value;
+				minNode = this.clusterInfo.get(key).getIp();
+			}
+		}
+		minNode = "10.109.253.71";
+		return minNode;
+	}
 	
 	public static void main(String[] args){
 		BlancerUtil util = new BlancerUtil();
-		util.fetch("http://localhost:8088/sparkPlatform/monitor");
+		System.out.println(util.caculateNode());
 	}
 
 }

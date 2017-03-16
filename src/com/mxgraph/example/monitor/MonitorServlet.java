@@ -53,7 +53,7 @@ public class MonitorServlet extends HttpServlet {
 					ans +="\"NetInfo\":\""+Math.round((6+4*Math.random())*100)/100.0+"MB\",";
 					ans += "\"apps\":";
 //					String apps = HttpMethod.sendGet("http://"+zkClient.getData("/monitor/"+child)+":4040/api/v1/applications", "");
-					String apps = HttpMethod.sendGet("http://localhost:4040/api/v1/applications", "");
+					String apps = HttpMethod.sendGet("http://"+Constants.LOCAL_HOST+":4040/api/v1/applications", "");
 //					String streamHTML = HttpMethod.sendGet("http://localhost:4040/streaming/index.html", "");
 //					System.out.println(streamHTML.substring(streamHTML.indexOf("Avg"), streamHTML.indexOf("events")));
 //					System.out.println(streamHTML);

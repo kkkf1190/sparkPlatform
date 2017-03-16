@@ -54,9 +54,8 @@ public class CodeGenerator {
 										String type = ele1.attributeValue("value").split("~")[0];
 										String url = ele1.attributeValue("value").split("~")[1];
 										String method = ele1.attributeValue("value").split("~")[2];
-										code += ".map(x=>{\n" + " var value = " + map.get(type) + "(\"" + url + "\",\""
-												+ method + "\"," + "x.split(\"@\")(1))\n"
-												+ " var name = x.split(\"@\")(0)\n" + "name+\"@\"+value\n" + "})";
+										code += ".map(x => " + map.get(type) + "(\"" + url + "\",\"" + method + "\","
+												+ "x.toString))\n";
 									}
 								}
 							}
@@ -87,7 +86,7 @@ public class CodeGenerator {
 										String url = ele1.attributeValue("value").split("~")[1];
 										String method = ele1.attributeValue("value").split("~")[2];
 										code += ".map(x => " + map.get(type) + "(\"" + url + "\",\"" + method + "\","
-												+ "x.toString).toInt)\n";
+												+ "x.toString))\n";
 									}
 								}
 							}
@@ -123,9 +122,8 @@ public class CodeGenerator {
 											String type = ele1.attributeValue("value").split("~")[0];
 											String url = ele1.attributeValue("value").split("~")[1];
 											String method = ele1.attributeValue("value").split("~")[2];
-											code += ".map(x=>{\n" + " var value =" + map.get(type) + "(\"" + url
-													+ "\",\"" + method + "\"," + "x.split(\"@\")(1))\n"
-													+ " var name = x.split(\"@\")(0)\n" + "name+\"@\"+value\n" + "})";
+											code += ".map(x => " + map.get(type) + "(\"" + url + "\",\"" + method + "\","
+													+ "x.toString))\n";
 										}
 									}
 								}
@@ -164,9 +162,8 @@ public class CodeGenerator {
 											String type = ele1.attributeValue("value").split("~")[0];
 											String url = ele1.attributeValue("value").split("~")[1];
 											String method = ele1.attributeValue("value").split("~")[2];
-											code += ".map(x=>{\n" + " var value =" + map.get(type) + "(\"" + url
-													+ "\",\"" + method + "\"," + "x.split(\"@\")(1))\n"
-													+ " var name = x.split(\"@\")(0)\n" + "name+\"@\"+value\n" + "})";
+											code += ".map(x => " + map.get(type) + "(\"" + url + "\",\"" + method + "\","
+													+ "x.toString))\n";
 										}
 									}
 								}
@@ -200,8 +197,8 @@ public class CodeGenerator {
 											String type = ele1.attributeValue("value").split("~")[0];
 											String url = ele1.attributeValue("value").split("~")[1];
 											String method = ele1.attributeValue("value").split("~")[2];
-											code += ".map(x =>" + map.get(type) + "(\"" + url + "\",\"" + method + "\","
-													+ "x.toString).toInt)\n";
+											code += ".map(x => " + map.get(type) + "(\"" + url + "\",\"" + method + "\","
+													+ "x.toString))\n";
 										}
 									}
 								}
@@ -232,8 +229,8 @@ public class CodeGenerator {
 											String type = ele1.attributeValue("value").split("~")[0];
 											String url = ele1.attributeValue("value").split("~")[1];
 											String method = ele1.attributeValue("value").split("~")[2];
-											code += ".map(x => " + map.get(type) + "(\"" + url + "\",\"" + method
-													+ "\"," + "x.toString).toInt)\n";
+											code += ".map(x => " + map.get(type) + "(\"" + url + "\",\"" + method + "\","
+													+ "x.toString))\n";
 										}
 									}
 								}
@@ -277,7 +274,11 @@ public class CodeGenerator {
 			if (casesNodes.size() != 0) {
 				String casesOps = "";
 				Element branchEnd = null;
-				branchEnd = output;
+				if(reduce != null){
+					branchEnd = reduce;
+				}else{
+					branchEnd = output;
+				}
 				// 计算每条支路的代码
 				for (int i = 0; i < casesNodes.size(); i++) {
 					code += "val res" + i + "=input";
@@ -321,29 +322,14 @@ public class CodeGenerator {
 											code += ".filter(" + ele1.attributeValue("value") + ")";
 										}
 										if (ele1.attributeValue("style") != null
-												&& "triangle".equals(ele1.attributeValue("style").toString())
-												&& currentNodeId.equals(ele1.attributeValue("id"))) {
-											code += ".reduceByKey(_" + ele1.attributeValue("value") + "_)";
-										}
-										if (ele1.attributeValue("style") != null
 												&& "ellipse;shape=cloud".equals(ele1.attributeValue("style").toString())
 												&& currentNodeId.equals(ele1.attributeValue("id"))) {
 											code += "\n";
-											String[] attris = ele1.attributeValue("value").split("~");
-											String ans = "res"+i+".foreachRDD(rdd => {\n"
-													+"	val y = rdd.collect()\n"
-												    +"	y.foreach( pair =>{\n"
-												    +"		val uid = pair._1\n"
-												    +"		val clickCount = pair._2\n"
-												    +"		val value=\""+attris[3]+"\"\n"
-												    +"		val arg = uid+\"-\"+clickCount+\"-\"+value\n"
-												    +"		var rate = 1.0\n"	
-												    +"		rate = service.invokeWebService(\""+attris[1]+"\",\""+attris[2]+"\",arg).toDouble\n"
-												    +"		out.write(uid+\"结果为：\"+ rate*100+\"%\\n\")\n"
-												    +"		out.flush()\n"
-												    +"	})\n"
-												    +"})\n";
-											code += ans;
+											String type1 = ele1.attributeValue("value").split("~")[0];
+											String url = ele1.attributeValue("value").split("~")[1];
+											String method = ele1.attributeValue("value").split("~")[2];
+											code += ".map(x => " + map.get(type1) + "(\"" + url + "\",\"" + method + "\","
+													+ "x.toString))\n";
 										}
 									}
 								}
@@ -367,6 +353,10 @@ public class CodeGenerator {
 				// parser.flatMapParser(flatMap.attributeValue("value"),casesOps);
 				// code += ".map("+res+")";
 				// }
+				code += "val res=res0";
+				for(int i=1;i<casesNodes.size();i++){
+					code += ".union(res"+i+")";
+				}
 			}
 		}
 		return code;

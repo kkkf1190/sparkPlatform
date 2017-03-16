@@ -5,6 +5,8 @@ import java.util.HashSet;
 
 import org.dom4j.Element;
 
+import com.mxgraph.examples.web.Constants;
+
 public class TemplateGenerator {
 	HashSet<String> set = null;
 	HashMap<String,String> map = null;
@@ -42,8 +44,7 @@ public class TemplateGenerator {
 					+ "	var df = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");//设置日期格式\n"
 					+ "	val sparkConf = new SparkConf().setAppName(\"NetworkWordCount\")\n"
 					+ "	val ssc = new StreamingContext(sparkConf, Seconds(1))\n"
-					+ "	val lines = ssc.socketTextStream(\"10.108.166.75\", 9999, StorageLevel.MEMORY_AND_DISK_SER)\n"// To-do
-																														// 将ip改为从配置中读
+					+ "	val lines = ssc.socketTextStream(\""+Constants.DATA_SOURCE+"\", 9999, StorageLevel.MEMORY_AND_DISK_SER)\n"
 					+ "	 val input = lines.flatMap(_.split(\"\\n\"))\n" + "	" + coreCode + "\n"
 					+"	 res.foreachRDD(x => {\n"
 					+"   	var y = x.collect()\n"

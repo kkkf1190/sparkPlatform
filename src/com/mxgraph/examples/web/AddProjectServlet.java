@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,6 +35,7 @@ public class AddProjectServlet extends HttpServlet {
 			throws ServletException, IOException {
 		if (request.getContentLength() < Constants.MAX_REQUEST_SIZE) {
 			String projectName = request.getParameter("project");
+			Constants.SESSION_MANAGER.put(projectName, new HashMap<String,String>());
 
 			if (projectName != null && projectName.length() > 0) {
 				response.setContentType("text/html;charset=GB2312");
@@ -52,7 +55,7 @@ public class AddProjectServlet extends HttpServlet {
 				} else {
 					out.write("项目名称重复，请重新输入！！");
 				}
-				copyFolder(sourceFile, file);
+//				copyFolder(sourceFile, file);
 				HttpSession session = request.getSession();// 没有Session就新建一个
 				session.setAttribute("project", projectName);// 在服务器端存储"键-值对"
 
